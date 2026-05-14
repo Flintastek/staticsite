@@ -1,6 +1,6 @@
 import unittest
 from block_type import block_to_block_type, BlockType
-from markdown_func import markdown_to_blocks, markdown_to_html_node
+from markdown_func import markdown_to_blocks, markdown_to_html_node, extract_title
 class TestMarkdownToBlocks(unittest.TestCase):
     def test_markdown_to_blocks(self):
         md = """
@@ -58,3 +58,27 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff</code></pre></div>",
         )
+class TestExtractTitle(unittest.TestCase):
+
+    def test_header_inside_codebloock(self):
+        md = """
+```
+# detta är min header
+jibberish
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
+        with self.assertRaises(Exception):
+            extract_title(md)
+
+    def test_header(self):
+
+        md = """
+# detta är min header
+jibberish
+This is text that _should_ remain
+the **same** even with inline stuff
+"""
+        header = extract_title(md)
+        self.assertEqual(header,"detta är min header")

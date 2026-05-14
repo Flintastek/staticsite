@@ -1,3 +1,4 @@
+import re
 from block_type import block_to_block_type, BlockType
 from htmlnode import ParentNode, LeafNode
 from textnode import TextType
@@ -50,6 +51,8 @@ def markdown_to_html_node(markdown):
 def text_to_children(text):
     text_nodes = text_to_textnodes(text)
     children = []
+    if text_nodes is None:
+        return []
     for text_node in text_nodes:
         if text_node.text_type == TextType.TEXT:
             children.append(LeafNode(None, text_node.text))
@@ -64,3 +67,11 @@ def text_to_children(text):
         elif text_node.text_type == TextType.IMAGE:
             children.append(LeafNode("img", "", {"src": text_node.url, "alt": text_node.text}))
     return children
+
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        if block_to_block_type(block) == BlockType.HEADING:
+            if block.startswith("# "):
+                return re.match(r"^# (.+)", block).group(1).strip()
+    raise Exception("no header in markdown")

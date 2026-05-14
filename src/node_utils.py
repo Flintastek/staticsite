@@ -3,7 +3,7 @@ from textnode import TextNode, TextType
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     if not old_nodes:
-        return;
+        return
 
     new = []
     for node in old_nodes:
